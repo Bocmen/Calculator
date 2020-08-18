@@ -12,7 +12,7 @@ namespace Calculator
         static void Main(string[] args)
         {
             Console.Write("Напишите выражение: ");
-            string str = "(((5+5))+6+(5+5)+7)";
+            string str = "((5+5)+6+(5+5)+7)";
             Console.WriteLine();
             var r = CalculateStr(str);
 
