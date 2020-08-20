@@ -6,6 +6,9 @@ namespace Calculator
 {
     public static class Calculator
     {
+        /// <summary>
+        /// Список операций (если какого то оператора нет в списке Calculate выдаст исключение)
+        /// </summary>
         private static Operator[] Operators = new Operator[]
         {
             new Operator { Symbol = ')', Priority = 0 },
@@ -16,23 +19,25 @@ namespace Calculator
             new Operator { Symbol = '*', Priority = 2 },
             new Operator { Symbol = '^', Priority = 3 }
         };
+        /// <summary>
+        /// Подсчёт выражения из строки
+        /// </summary>
+        /// <returns>Результат выражения</returns>
         public static double Calculate(string str)
         {
             try
             {
-                object[] Elements = HendlerObject(str.Replace('.', ',').Replace("+-", "-").Replace("-+", "-"));
+                object[] Elements = HendlerObject(FilterStr(str));
                 Stack<double> Number = new Stack<double>();
                 Stack<Operator> operators = new Stack<Operator>();
                 foreach (var elem in Elements)
                 {
-                    // Число ли это
                     if (elem.GetType() == typeof(double))
                     {
                         Number.Push((double)elem);
                     }
                     else
                     {
-                        // Если предыдущий оператор по приоритету меньше или равен
                         if (operators.Count > 0 && Number.Count > 1 && operators.Peek().Priority != 0 && ((Operator)elem).Priority != 0 && operators.Peek().Priority >= ((Operator)elem).Priority)
                         {
                             Number.Push(CalculateTwoElem(Number.Pop(), Number.Pop(), operators.Pop()));
@@ -56,6 +61,16 @@ namespace Calculator
                 throw new Exception("Введенное выражение неправильно записано");
             }
         }
+        /// <summary>
+        /// Удаляет ненужные части (подготавливает строку к разбитию её на числа и операторы)
+        /// </summary>
+        private static string FilterStr(string str) => str.Replace('.', ',').Replace("+-", "-").Replace("-+", "-");
+        /// <summary>
+        /// Применяет к двум элементам оператор
+        /// </summary>
+        /// <param name="Two">Второй элемент</param>
+        /// <param name="One">Первый элемент</param>
+        /// <param name="operator">Применяемый оператор</param>
         private static double CalculateTwoElem(double Two, double One, Operator @operator)
         {
             switch (@operator.Symbol)
@@ -74,6 +89,9 @@ namespace Calculator
                     return 0;
             }
         }
+        /// <summary>
+        /// Разбитие строки на числа и операторы
+        /// </summary>
         private static object[] HendlerObject(string str)
         {
             List<object> list = new List<object>();
@@ -92,10 +110,23 @@ namespace Calculator
             }
             return list.ToArray();
         }
+        /// <summary>
+        /// Данные об операторе
+        /// </summary>
         public struct Operator
         {
+            /// <summary>
+            /// Его обозначение в виде символа
+            /// </summary>
             public char Symbol;
+            /// <summary>
+            /// Его приоритет
+            /// </summary>
             public byte Priority;
+            public override string ToString()
+            {
+                return string.Format("Символ: {0}, Приоритет: {1}", Symbol, Priority);
+            }
         }
     }
 }
