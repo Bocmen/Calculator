@@ -98,6 +98,15 @@ namespace Calculator
             for (int i = 0; i < str.Length; i++)
             {
                 string rS = null;
+                if (list.Count > 0 && list.Last().GetType() == typeof(Operator))
+                {
+                    Operator o = Operators.FirstOrDefault(x => x.Symbol == str[i]);
+                    if (o != null && o.Priority != 0)
+                    {
+                        rS += o.Symbol;
+                        i++;
+                    }
+                }
                 while (i < str.Length && (str[i] == ',' || double.TryParse(str[i].ToString(), out double r)))
                     rS += str[i++];
                 if (rS != null)
@@ -107,13 +116,14 @@ namespace Calculator
                 }
                 else
                     list.Add(Operators.First(x => x.Symbol == str[i]));
+
             }
             return list.ToArray();
         }
         /// <summary>
         /// Данные об операторе
         /// </summary>
-        public struct Operator
+        public class Operator
         {
             /// <summary>
             /// Его обозначение в виде символа
