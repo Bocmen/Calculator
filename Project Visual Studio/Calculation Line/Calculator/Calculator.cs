@@ -87,7 +87,7 @@ namespace Calculator
                 // Получаем параметры X, Y
                 string[] param = str.Substring(StartIndex, EndIndex - StartIndex).Split(',');
                 // Вставляем исправленое выражение дя подсчёта олгоритмом YlX
-                str = $"{str.Substring(0, matches[i].Index)}(({param[1]})l({param[0]})){str.Substring(EndIndex + 1, str.Length - EndIndex - 1)}";
+                str = $"{str.Substring(0, matches[i].Index)}({Calculate(param[1])}l{Calculate(param[0])}){str.Substring(EndIndex + 1, str.Length - EndIndex - 1)}";
                 // Поиск индекса закрывающей скобки
                 int SearchParenthesis(int StartSearchIndex)
                 {
