@@ -154,7 +154,7 @@ namespace Calculator
             for (int i = 0; i < str.Length; i++)
             {
                 string rS = null;
-                if (list.Count > 0 && list.Last().GetType() == typeof(Operator))
+                if (list.Count > 0 && list.Last().GetType() == typeof(Operator) && ((Operator)list.Last()).Priority != 0)
                 {
                     Operator o = Operators.FirstOrDefault(x => x.Symbol == str[i]);
                     if (o != null && o.Priority == 1)
@@ -191,7 +191,7 @@ namespace Calculator
             public byte Priority;
             public override string ToString()
             {
-                return string.Format("Символ: {0}, Приоритет: {1}", Symbol, Priority);
+                return string.Format("Символ: {0} Приоритет: {1}", Symbol, Priority);
             }
         }
     }
