@@ -1,23 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Calculator
 {
     public static class Calculator
     {
+        private const string OperatorLog = "log";
+        private const char OperatorParenthesisIn = '(';
+        private const char OperatorParenthesisOut = ')';
+
+
         /// <summary>
-        /// Список операций (если какого то оператора нет в списке Calculate выдаст исключение)
+        /// Список операций с двумя числами (если какого то оператора нет в списке Calculate выдаст исключение)
         /// </summary>
         private static Operator[] Operators = new Operator[]
         {
-            new Operator { Symbol = ')', Priority = 0 },
-            new Operator { Symbol = '(', Priority = 0 },
+            new Operator { Symbol = OperatorParenthesisIn, Priority = 0 },
+            new Operator { Symbol = OperatorParenthesisOut, Priority = 0 },
             new Operator { Symbol = '+', Priority = 1 },
             new Operator { Symbol = '-', Priority = 1 },
             new Operator { Symbol = '/', Priority = 2 },
             new Operator { Symbol = '*', Priority = 2 },
-            new Operator { Symbol = '^', Priority = 3 }
+            new Operator { Symbol = '^', Priority = 3 },
+            new Operator { Symbol = 'l', Priority = 4 }, // Логарифм
         };
         /// <summary>
         /// Подсчёт выражения из строки
@@ -25,46 +32,79 @@ namespace Calculator
         /// <returns>Результат выражения</returns>
         public static double Calculate(string str)
         {
-            try
+            //try
+            //{
+            object[] Elements = HendlerObject(FilterStr(str));
+            Stack<double> Number = new Stack<double>();
+            Stack<Operator> operators = new Stack<Operator>();
+            foreach (var elem in Elements)
             {
-                object[] Elements = HendlerObject(FilterStr(str));
-                Stack<double> Number = new Stack<double>();
-                Stack<Operator> operators = new Stack<Operator>();
-                foreach (var elem in Elements)
+                if (elem.GetType() == typeof(double))
                 {
-                    if (elem.GetType() == typeof(double))
+                    Number.Push((double)elem);
+                }
+                else
+                {
+                    if (operators.Count > 0 && Number.Count > 1 && operators.Peek().Priority != 0 && ((Operator)elem).Priority != 0 && operators.Peek().Priority >= ((Operator)elem).Priority)
                     {
-                        Number.Push((double)elem);
+                        Number.Push(CalculateTwoElem(Number.Pop(), Number.Pop(), operators.Pop()));
+                    }
+                    if (((Operator)elem).Priority == 0 && ((Operator)elem).Symbol == ')')
+                    {
+                        while (operators.Peek().Symbol != '(')
+                            Number.Push(CalculateTwoElem(Number.Pop(), Number.Pop(), operators.Pop()));
+                        operators.Pop();
                     }
                     else
-                    {
-                        if (operators.Count > 0 && Number.Count > 1 && operators.Peek().Priority != 0 && ((Operator)elem).Priority != 0 && operators.Peek().Priority >= ((Operator)elem).Priority)
-                        {
-                            Number.Push(CalculateTwoElem(Number.Pop(), Number.Pop(), operators.Pop()));
-                        }
-                        if (((Operator)elem).Priority == 0 && ((Operator)elem).Symbol == ')')
-                        {
-                            while (operators.Peek().Symbol != '(')
-                                Number.Push(CalculateTwoElem(Number.Pop(), Number.Pop(), operators.Pop()));
-                            operators.Pop();
-                        }
-                        else
-                            operators.Push((Operator)elem);
-                    }
+                        operators.Push((Operator)elem);
                 }
-                for (int i = operators.Count; i > 0; i--)
-                    Number.Push(CalculateTwoElem(Number.Pop(), Number.Pop(), operators.Pop()));
-                return Number.Pop();
             }
-            catch
-            {
-                throw new Exception("Введенное выражение неправильно записано");
-            }
+            for (int i = operators.Count; i > 0; i--)
+                Number.Push(CalculateTwoElem(Number.Pop(), Number.Pop(), operators.Pop()));
+            return Number.Pop();
+            //}
+            //catch
+            //{
+            //    throw new Exception("Введенное выражение неправильно записано");
+            //}
         }
         /// <summary>
         /// Удаляет ненужные части (подготавливает строку к разбитию её на числа и операторы)
         /// </summary>
-        private static string FilterStr(string str) => str.Replace('.', ',').Replace("+-", "-").Replace("-+", "-");
+        private static string FilterStr(string str)=> FilterLog(str.Replace('.', ',').Replace("+-", "-").Replace("-+", "-"));
+        /// <summary>
+        /// Делает выражение log(X,Y) читабельным для алгоритма
+        /// </summary>
+        private static string FilterLog(string str)
+        {
+            MatchCollection matches = new Regex(OperatorLog).Matches(str);
+            for (int i = matches.Count - 1; i >= 0; i--)
+            {
+                // Индекс начала Log
+                int StartIndex = matches[i].Index + OperatorLog.Length + 1;
+                // Индекс Окончания выражения Log(X,Y)
+                int EndIndex = SearchParenthesis(StartIndex - 1);
+                // Получаем параметры X, Y
+                string[] param = str.Substring(StartIndex, EndIndex - StartIndex).Split(',');
+                // Вставляем исправленое выражение дя подсчёта олгоритмом YlX
+                str = $"{str.Substring(0, matches[i].Index)}(({param[1]})l({param[0]})){str.Substring(EndIndex + 1, str.Length - EndIndex - 1)}";
+                // Поиск индекса закрывающей скобки
+                int SearchParenthesis(int StartSearchIndex)
+                {
+                    int CountParenthesis = 0;
+                    do
+                    {
+                        if (str[StartSearchIndex] == OperatorParenthesisIn)
+                            CountParenthesis++;
+                        else if (str[StartSearchIndex] == OperatorParenthesisOut)
+                            CountParenthesis--;
+                        StartSearchIndex++;
+                    } while (CountParenthesis != 0);
+                    return --StartSearchIndex;
+                }
+            }
+            return str;
+        }
         /// <summary>
         /// Применяет к двум элементам оператор
         /// </summary>
@@ -85,6 +125,8 @@ namespace Calculator
                     return One / Two;
                 case '^':
                     return Math.Pow(One, Two);
+                case 'l':
+                    return Math.Log(One, Two);
                 default:
                     return 0;
             }
@@ -101,7 +143,7 @@ namespace Calculator
                 if (list.Count > 0 && list.Last().GetType() == typeof(Operator))
                 {
                     Operator o = Operators.FirstOrDefault(x => x.Symbol == str[i]);
-                    if (o != null && o.Priority != 0)
+                    if (o != null && o.Priority == 1)
                     {
                         rS += o.Symbol;
                         i++;
@@ -121,7 +163,7 @@ namespace Calculator
             return list.ToArray();
         }
         /// <summary>
-        /// Данные об операторе
+        /// Данные об операторе (для взаимодействия с двумя числами)
         /// </summary>
         public class Operator
         {
