@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Calculator.Calculator;
+using System;
 
 namespace Calculator
 {
@@ -7,7 +8,14 @@ namespace Calculator
         static void Main()
         {
             Console.Write("Напишите выражение: ");
-            Console.WriteLine("\r\n{0}\r\n",Calculator.Calculate(Console.ReadLine()));
+            try
+            {
+                Console.WriteLine("\r\n{0}\r\n", CalculatorHendler.Calculate(Console.ReadLine()));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("\r\n{0}\r\n", e.Message);
+            }
             Main();
         }
     }
