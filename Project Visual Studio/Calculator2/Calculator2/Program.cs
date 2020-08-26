@@ -13,7 +13,7 @@ namespace Calculator2
             Setting setting = new Setting();
             setting.AddOperator(new CastumOperator("Sin", (x) => 0, SearchEndIndex, true));
             setting.AddOperator(new EndValueOperator("!", (x) => x));
-            string s = "5!!";// "sin|34|+sin|0|"; // "5!+6!";// "-(56+36)!+(56)!";
+            string s = "5+-sin|5|+sin|636--5|!!--(1)";// "sin|34|+sin|0|"; // "5!+6!";// "-(56+36)!+(56)!";
             char[] Arr = s.ToCharArray();
             var r = StringParser.SearchOperators(s, setting);
             Console.ReadLine();

@@ -94,17 +94,17 @@ namespace Calculator2.Calculator.Data
                     if (ps[i - 1].e is double @D)
                     {
                         ps[i].Data = @D;
-                        ps.RemoveAt(i++ - 1);
+                        ps.RemoveAt(i-- - 1);
                     }
                     else if (ps[i - 1].e is CastumOperator castumOperator)
                     {
                         ps[i].Data = new AddDataOperator(castumOperator, ps[i - 1].Data);
-                        ps.RemoveAt(i++ - 1);
+                        ps.RemoveAt(i-- - 1);
                     }
                     else if (ps[i - 1].e is EndValueOperator endValueOperator)
                     {
                         ps[i].Data = new AddDataOperator(endValueOperator, ps[i - 1].Data);
-                        ps.RemoveAt(i++ - 1);
+                        ps.RemoveAt(i-- - 1);
                     }
                     else if (CheckChar(ps[i - 1].e, OperatorParenthesisOut))
                     {
