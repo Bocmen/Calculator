@@ -1,5 +1,6 @@
 ﻿using Calculator2.Calculator;
 using Calculator2.Calculator.Data;
+using Calculator2.Calculator.Data.Operator;
 using System;
 
 namespace Calculator2
@@ -10,18 +11,11 @@ namespace Calculator2
         {
             Console.WriteLine("Hello World!");
             Setting setting = new Setting();
-            setting.AddOperator(new Calculator.Data.Operator.CastumOperator("Sin", (x) => 0, SearchEndIndex));
-            string s = "sin|sin|sin|sin|||||sin||sin||sin|sin||sin||sin|||";
+            setting.AddOperator(new Calculator.Data.Operator.CastumOperator("Sin", (x) => 0, SearchEndIndex, true));
+            setting.AddOperator(new EndValueOperator("!", (x) => x));
+            string s = "-(56+36)!+(56)!";// "sin|34|+sin|0|"; // "5!+6!";// "-(56+36)!+(56)!";
             char[] Arr = s.ToCharArray();
-            Console.WriteLine(string.Join("   ", Arr));
-            for (int i = 0; i < Arr.Length; i++)
-            {
-                string S = i.ToString();
-                if(S.Length < 2)
-                    s += " ";
-                Console.Write(S + " ");
-            }
-            StringParser.SearchOperators(s, setting);
+            var r = StringParser.SearchOperators(s, setting);
             Console.ReadLine();
         }
         private static int SearchEndIndex(int start, string str)
@@ -34,5 +28,6 @@ namespace Calculator2
             }
             return 0;
         }
+        //TOODO знак , добавить ему проверку на совпадение с операторами
     }
 }

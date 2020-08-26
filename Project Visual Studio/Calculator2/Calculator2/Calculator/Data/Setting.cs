@@ -17,6 +17,10 @@ namespace Calculator2.Calculator.Data
         /// Обозначение закрывающей скобки
         /// </summary>
         public char OperatorParenthesisOut = ')';
+        /// <summary>
+        /// Обозначение разделяющей запятой с числами с плавующей запятой
+        /// </summary>
+        public char OperatorSeparatorDouble = ',';
 
         private char
             operatorPlus = '+',
@@ -101,7 +105,7 @@ namespace Calculator2.Calculator.Data
             }
         }
         ///////////////////////////////////////////////////////////////// Данные операторы и константы
-        public StandartOperator[] StandartOperators;
+        public StandartOperator[] StandartOperators { get; private set; }
         private List<Const> consts = new List<Const>()
         {
             new Const("pi",Math.PI),
@@ -177,6 +181,8 @@ namespace Calculator2.Calculator.Data
             return list.ToArray();
         }
         public bool AddOperator(CastumOperator castumOperator) => AddComponentList(ref costumOperator, castumOperator, ((IName)castumOperator).GetName());
+        public bool AddOperator(StandartOperator standartOperator) => AddComponentList(ref costumOperator, standartOperator, ((IName)standartOperator).GetName());
+        public bool AddOperator(EndValueOperator endValueOperator) => AddComponentList(ref costumOperator, endValueOperator, ((IName)endValueOperator).GetName());
         public bool RemoveOperator(int index) => RemoveComponentList(ref costumOperator, index);
         public bool AddConst(Const @const) => AddComponentList(ref consts, @const, @const.Name);
         public bool RemoveConst(int index) => RemoveComponentList(ref consts, index);

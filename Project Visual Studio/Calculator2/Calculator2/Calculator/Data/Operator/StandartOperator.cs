@@ -29,10 +29,12 @@ namespace Calculator2.Calculator.Data.Operator
                         throw new Exception("Неверные параметры для оператора");
                 return CalculateMetod.Invoke((double)vs[0], (double)vs[1]);
             }
-            throw new Exception("Неверное кол-во входных операторов у оператора");
+            throw new ArgumentException("Неверное кол-во входных операторов у оператора");
         }
         public override string ToString() => $"{Symbol} приоритет: {Priority}";
 
         string IName.GetName() => Symbol.ToString();
+
+        public object Clone() => new StandartOperator(Symbol, Priority, CalculateMetod);
     }
 }
