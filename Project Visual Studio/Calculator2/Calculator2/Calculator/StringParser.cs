@@ -1,9 +1,10 @@
-﻿using Calculator2.Calculator.Data.Operator;
+﻿using Calculator2.Calculator.Data;
+using Calculator2.Calculator.Data.Operator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Calculator2.Calculator.Data
+namespace Calculator2.Calculator
 {
     public static class StringParser
     {

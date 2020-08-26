@@ -2,7 +2,6 @@
 using Calculator2.Calculator.Data;
 using Calculator2.Calculator.Data.Operator;
 using System;
-using static Calculator2.Calculator.Data.StringParser;
 
 namespace Calculator2
 {
