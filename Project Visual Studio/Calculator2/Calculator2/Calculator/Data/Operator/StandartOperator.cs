@@ -34,7 +34,5 @@ namespace Calculator2.Calculator.Data.Operator
         public override string ToString() => $"{Symbol} приоритет: {Priority}";
 
         string IName.GetName() => Symbol.ToString();
-
-        public object Clone() => new StandartOperator(Symbol, Priority, CalculateMetod);
     }
 }

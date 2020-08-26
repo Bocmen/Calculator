@@ -7,7 +7,6 @@ namespace Calculator2.Calculator.Data.Operator
         public delegate double MetotCalculate(double d);
         public readonly string Designation;
         private readonly MetotCalculate CalculateMetod;
-        public object Data;
 
         public EndValueOperator(string Designation, MetotCalculate CalculateMetod)
         {
@@ -28,7 +27,5 @@ namespace Calculator2.Calculator.Data.Operator
         }
 
         string IName.GetName() => Designation;
-
-        public object Clone() => new EndValueOperator(Designation, CalculateMetod);
     }
 }

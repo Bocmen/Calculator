@@ -32,7 +32,7 @@ namespace Calculator2.Calculator.Data
             SearchValue(ref DataStandartOperatorConstValue, str, setting.OperatorSeparatorDouble);
             EndResul.AddRange(DataStandartOperatorConstValue);
             CompeteOperator(ref EndResul, ref setting);
-            return EndResul.Select(x => x.e).ToArray();
+            return EndResul.Select(x => x.Data != null ? new AddDataOperator(x.e, x.Data) : x.e).ToArray();
         }
         private static void CompeteOperator(ref List<DataObjectInStr> ps, ref Setting setting)
         {
@@ -93,12 +93,17 @@ namespace Calculator2.Calculator.Data
                 {
                     if (ps[i - 1].e is double @D)
                     {
-                        @operator.Data = @D;
+                        ps[i].Data = @D;
                         ps.RemoveAt(i++ - 1);
                     }
                     else if (ps[i - 1].e is CastumOperator castumOperator)
                     {
-                        @operator.Data = castumOperator;
+                        ps[i].Data = new AddDataOperator(castumOperator, ps[i - 1].Data);
+                        ps.RemoveAt(i++ - 1);
+                    }
+                    else if (ps[i - 1].e is EndValueOperator endValueOperator)
+                    {
+                        ps[i].Data = new AddDataOperator(endValueOperator, ps[i - 1].Data);
                         ps.RemoveAt(i++ - 1);
                     }
                     else if (CheckChar(ps[i - 1].e, OperatorParenthesisOut))
@@ -117,7 +122,7 @@ namespace Calculator2.Calculator.Data
 
                         } while (count != 0);
                         endIndex = i - --endIndex;
-                        @operator.Data = ps.Where((x, y) => y >= endIndex && y < i).ToArray();
+                        ps[i].Data = ps.Where((x, y) => y >= endIndex && y < i).ToArray();
                         for (int Del = i - 1; Del >= endIndex; Del--)
                             ps.RemoveAt(Del);
                         i = endIndex;
@@ -125,6 +130,7 @@ namespace Calculator2.Calculator.Data
                     bool CheckChar(object e, char CheckChar) => e is char @char && @char == CheckChar;
                 }
             }
+            ///TOODO нельзя применить сразу два оператора EndValueOperator решается проходом справа налево
         }
         private static void SearchValue(ref List<DataObjectInStr> DataStandartOperatorConstValue, string str, char Separator)
         {
@@ -159,8 +165,8 @@ namespace Calculator2.Calculator.Data
             {
                 CastumOperator @operator = (CastumOperator)castumOperators[i].e;
                 int EndIndex = RemoveStrSearchIndex(castumOperators[i].StartIndex, @operator, str);
-                @operator.Data = str.Substring(castumOperators[i].StartIndex + ((IName)castumOperators[i].e).GetName().Length, EndIndex - castumOperators[i].StartIndex - ((IName)castumOperators[i].e).GetName().Length + 1);
-                ps.Add(new DataObjectInStr(castumOperators[i].StartIndex, castumOperators[i].e, EndIndex));
+                string s = str.Substring(castumOperators[i].StartIndex + ((IName)castumOperators[i].e).GetName().Length, EndIndex - castumOperators[i].StartIndex - ((IName)castumOperators[i].e).GetName().Length + 1);
+                ps.Add(new DataObjectInStr(castumOperators[i].StartIndex, castumOperators[i].e, EndIndex, s));
 
                 int RemoveStrSearchIndex(int StartIndex, CastumOperator @operator, string str)
                 {
@@ -210,6 +216,7 @@ namespace Calculator2.Calculator.Data
             public int StartIndex;
             public int EndIndex;
             public object e;
+            public object Data;
             public int Length
             {
                 get
@@ -226,6 +233,14 @@ namespace Calculator2.Calculator.Data
                 this.EndIndex = EndIndex;
             }
 
+            public DataObjectInStr(int StartIndex, object e, int EndIndex, object Data)
+            {
+                this.StartIndex = StartIndex;
+                this.e = e;
+                this.EndIndex = EndIndex;
+                this.Data = Data;
+            }
+
             public override string ToString() => GetName();
             private string GetName()
             {
@@ -236,6 +251,17 @@ namespace Calculator2.Calculator.Data
                 else
                     return ((char)e).ToString();
             }
+        }
+        public class AddDataOperator
+        {
+            public readonly object Operator;
+            public object Data;
+            public AddDataOperator(object Operator, object Data)
+            {
+                this.Operator = Operator;
+                this.Data = Data;
+            }
+            public Type OperatorGetType() => Operator.GetType();
         }
     }
 }

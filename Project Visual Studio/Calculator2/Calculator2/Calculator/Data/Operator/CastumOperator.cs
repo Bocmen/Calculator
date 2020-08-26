@@ -11,7 +11,6 @@ namespace Calculator2.Calculator.Data.Operator
         private readonly GetEndIndex getEndIndex;
         private readonly MetotCalculate CalculateMetod;
         public readonly bool HelperSearchIndex;
-        public object Data;
 
         public CastumOperator(string Designation, MetotCalculate CalculateMetod, GetEndIndex getEndIndex, bool HelperSearchIndex = true)
         {
@@ -35,7 +34,5 @@ namespace Calculator2.Calculator.Data.Operator
         public override string ToString() => $"{Designation}";
 
         string IName.GetName() => Designation;
-
-        public object Clone() => new CastumOperator(Designation, CalculateMetod, getEndIndex, HelperSearchIndex);
     }
 }
