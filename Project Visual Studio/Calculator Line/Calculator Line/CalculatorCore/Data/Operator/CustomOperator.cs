@@ -21,6 +21,7 @@ namespace CalculatorCore.Data.Operator
         }
 
         public int GetEndIndexSearch(int StartIndex, string str) => getEndIndex.Invoke(StartIndex + Designation.Length, str);
+        //public int GetEndIndexSearch(int StartIndex, string str) => getEndIndex.Invoke(StartIndex + Designation.Length < str.Length ? StartIndex + Designation.Length : StartIndex, str);
 
         public MetotCalculate GetMetotCalculate() => CalculateMetod;
 

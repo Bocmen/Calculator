@@ -24,6 +24,7 @@ namespace CalculatorCore
                 else
                     SearchElem(ref DataStandartOperatorConstValue, elem, ((IName)elem).GetName(), str);
             }
+            DataCustomOperators.Sort((a, b) => a.StartIndex.CompareTo(b.StartIndex));
             List<DataObjectInStr> EndResul = ComlpeteCustomOperators(DataCustomOperators, str);
             //Ищем открывающие и закрывающие скобки
             SearchElem(ref DataStandartOperatorConstValue, setting.OperatorParenthesisIn, setting.OperatorParenthesisIn.ToString(), str);
@@ -39,16 +40,17 @@ namespace CalculatorCore
             ps.Sort((a, b) => b.Length.CompareTo(a.Length));
             for (int i = 0; i < ps.Count; i++)
             {
-                DataObjectInStr resul = SearchElemIn(ps[i].StartIndex, ps[i].EndIndex, ref ps);
+                DataObjectInStr resul = SearchElemIn(ps[i].StartIndex, ps[i].EndIndex, ref ps, ps[i]);
                 while (resul != null)
                 {
                     ps.Remove(resul);
-                    resul = SearchElemIn(ps[i].StartIndex, ps[i].EndIndex, ref ps);
+                    resul = SearchElemIn(ps[i].StartIndex, ps[i].EndIndex, ref ps, ps[i]);
                 }
             }
             ps.Sort((a, b) => a.StartIndex.CompareTo(b.StartIndex));
             PlusMinusAddValue(ref ps, setting);
             JoinValueAndEndValueOperator(ref ps, setting.OperatorParenthesisIn, setting.OperatorParenthesisOut);
+
         }
         private static void PlusMinusAddValue(ref List<DataObjectInStr> ps, Setting setting)
         {
@@ -79,7 +81,7 @@ namespace CalculatorCore
                 }
                 else
                 {
-                    OldSymbolOperaor = (ps[i].e is StandartOperator @operator);
+                    OldSymbolOperaor = (ps[i].e is StandartOperator @operator) || (ps[i].e is char C && C == setting.OperatorParenthesisIn);
                 }
                 bool CheckCustomOperatorAndValue(object e) => e is CustomOperator || e is double || (e is char @char && @char == setting.OperatorParenthesisIn);
                 bool CheckPlusMinus(object e) => (e is StandartOperator @operator) && (@operator.Symbol == setting.OperatorPlus || @operator.Symbol == setting.OperatorMinus);
@@ -170,7 +172,7 @@ namespace CalculatorCore
                 int RemoveStrSearchIndex(int StartIndex, CustomOperator @operator, string str)
                 {
                     int EndIndex = @operator.GetEndIndexSearch(StartIndex, str);
-                    var resulSearch = SearchElemIn(customOperators[i].StartIndex, EndIndex, ref customOperators);
+                    var resulSearch = SearchElemIn(customOperators[i].StartIndex, EndIndex, ref customOperators, customOperators[i]);
 
                     if (resulSearch != null && resulSearch.StartIndex != StartIndex && @operator.HelperSearchIndex)
                     {
@@ -192,10 +194,10 @@ namespace CalculatorCore
             }
             return ps;
         }
-        private static DataObjectInStr SearchElemIn(int StartIndex, int EndIndex, ref List<DataObjectInStr> dataObjectInStrs)
+        private static DataObjectInStr SearchElemIn(int StartIndex, int EndIndex, ref List<DataObjectInStr> dataObjectInStrs, DataObjectInStr dataObjectInStr)
         {
             foreach (var elem in dataObjectInStrs)
-                if (elem.StartIndex > StartIndex && elem.StartIndex < EndIndex)
+                if (dataObjectInStr != elem && elem.StartIndex >= StartIndex && elem.StartIndex <= EndIndex)
                     return elem;
             return null;
         }
