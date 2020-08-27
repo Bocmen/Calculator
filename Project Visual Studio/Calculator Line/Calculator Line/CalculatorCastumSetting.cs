@@ -30,8 +30,7 @@ namespace CalculatorCore
             setting.AddOperator(new CustomOperator("Cos", (a, b) => Math.Cos(Calculate(a, b)), SearchEndIndexParenthesis, false));
             setting.AddOperator(new CustomOperator("tg", (a, b) => Math.Tan(Calculate(a, b)), SearchEndIndexParenthesis, false));
             setting.AddOperator(new CustomOperator("ctg", (a, b) => 1 / Math.Tan(Calculate(a, b)), SearchEndIndexParenthesis, false));
-            // setting.AddOperator(new CustomOperator("Abs", (a,b) => Math.Abs(Calculate(a, b)), SearchEndIndexParenthesis, true));
-            setting.AddOperator(new CustomOperator("|", CalculateModule, SearchEndIndexOperatorModule, true));
+            setting.AddOperator(new CustomOperator("|", CalculateModule, SearchEndIndexOperatorModule, true)); // Модуль числа к примеру |-5|
             setting.AddOperator(new EndValueOperator("!", Factorial));
         }
         private static int SearchEndIndexOperatorModule(int start, string str)

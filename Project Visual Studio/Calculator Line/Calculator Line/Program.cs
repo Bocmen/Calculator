@@ -13,16 +13,16 @@ namespace CalculatorTest
             setting.AddOperator(new CustomOperator("Sin", CalculateSin, SearchEndIndex, true));
             setting.AddOperator(new EndValueOperator("!", Factorial));
         restart:
-            //try
-            //{
+            try
+            {
                 Console.Write("Напишите выражение: ");
                 Console.WriteLine($"\r\n{CalculatorHendler.Calculate(Console.ReadLine(), CalculatorCastumSetting.Setting)}\r\n");
-            //}
-            //catch
-            //{
-            //    Console.WriteLine($"\r\nError\r\n");
-            //    goto restart;
-            //}
+            }
+            catch
+            {
+                Console.WriteLine($"\r\nError\r\n");
+                goto restart;
+            }
             goto restart;
         }
         private static double CalculateSin(string str, Setting setting) => Math.Sin(CalculatorHendler.Calculate(StringParser.SearchOperators(str[1..^1], setting), setting));
