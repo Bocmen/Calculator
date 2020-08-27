@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculatorCore", "Calculator2\CalculatorCore.csproj", "{2FC853A8-A7BE-45D1-951C-8C656744F95A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculatorCore", "Calculator Line\CalculatorCore.csproj", "{2FC853A8-A7BE-45D1-951C-8C656744F95A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
