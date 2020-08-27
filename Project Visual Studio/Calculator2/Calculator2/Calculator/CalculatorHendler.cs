@@ -7,6 +7,7 @@ namespace Calculator2.Calculator
 {
     public static class CalculatorHendler
     {
+        public static double Calculate(string str, Setting setting) => Calculate(StringParser.SearchOperators(str.ToLower().Replace(" ",""), setting), setting);
         public static double Calculate(object[] vs, Setting setting)
         {
             vs = ReversePolishNotationHendler.Hendler(vs, setting);
