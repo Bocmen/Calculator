@@ -4,7 +4,7 @@ namespace Calculator2.Calculator.Data.Operator
 {
     public class EndValueOperator : IOperator, IName
     {
-        public delegate double MetotCalculate(double d, Setting setting);
+        public delegate double MetotCalculate(double d);
         public readonly string Designation;
         private readonly MetotCalculate CalculateMetod;
 
@@ -20,7 +20,7 @@ namespace Calculator2.Calculator.Data.Operator
             {
                 if (vs[0].GetType() != typeof(double))
                     throw new Exception("Неверные параметры для оператора");
-                return CalculateMetod.Invoke((double)vs[0], setting);
+                return CalculateMetod.Invoke((double)vs[0]);
             }
             throw new ArgumentException("Неверное кол-во входных операторов у оператора");
         }
