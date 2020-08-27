@@ -6,6 +6,6 @@ namespace Calculator2.Calculator.Data.Operator
 {
     interface IOperator
     {
-        double Calculate(params object[] vs);
+        double Calculate(Setting setting, params object[] vs);
     }
 }

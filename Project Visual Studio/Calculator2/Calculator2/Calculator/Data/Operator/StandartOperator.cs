@@ -20,14 +20,14 @@ namespace Calculator2.Calculator.Data.Operator
         public MetotCalculate GetMetotCalculate() => CalculateMetod;
 
 
-        double IOperator.Calculate(params object[] vs)
+        double IOperator.Calculate(Setting setting ,params object[] vs)
         {
             if (vs.Length == 2)
             {
                 foreach (var elem in vs)
                     if (elem.GetType() != typeof(double))
                         throw new Exception("Неверные параметры для оператора");
-                return CalculateMetod.Invoke((double)vs[0], (double)vs[1]);
+                return CalculateMetod.Invoke((double)vs[1], (double)vs[0]);
             }
             throw new ArgumentException("Неверное кол-во входных операторов у оператора");
         }

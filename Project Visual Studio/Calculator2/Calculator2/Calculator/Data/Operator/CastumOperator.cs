@@ -4,7 +4,7 @@ namespace Calculator2.Calculator.Data.Operator
 {
     public class CastumOperator : IOperator, IName
     {
-        public delegate double MetotCalculate(string str);
+        public delegate double MetotCalculate(string str, Setting setting);
         public delegate int GetEndIndex(int StartIndexSearch, string str);
 
         public readonly string Designation;
@@ -24,10 +24,10 @@ namespace Calculator2.Calculator.Data.Operator
 
         public MetotCalculate GetMetotCalculate() => CalculateMetod;
 
-        double IOperator.Calculate(params object[] vs)
+        double IOperator.Calculate(Setting setting, params object[] vs)
         {
             if (vs.Length == 1 && vs[0].GetType() == typeof(string))
-                return CalculateMetod((string)vs[0]);
+                return CalculateMetod((string)vs[0], setting);
             throw new ArgumentException("Ошибка во входных параметрах оператора");
         }
 

@@ -1,6 +1,5 @@
 ﻿using Calculator2.Calculator.Data;
 using Calculator2.Calculator.Data.Operator;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -80,7 +79,7 @@ namespace Calculator2.Calculator
                 }
                 else
                 {
-                    OldSymbolOperaor = CheckPlusMinus(ps[i].e);
+                    OldSymbolOperaor = (ps[i].e is StandartOperator @operator);
                 }
                 bool CheckCastumOperatorAndValue(object e) => e is CastumOperator || e is double || (e is char @char && @char == setting.OperatorParenthesisIn);
                 bool CheckPlusMinus(object e) => (e is StandartOperator @operator) && (@operator.Symbol == setting.OperatorPlus || @operator.Symbol == setting.OperatorMinus);
@@ -123,7 +122,7 @@ namespace Calculator2.Calculator
 
                         } while (count != 0);
                         endIndex = i - --endIndex;
-                        ps[i].Data = ps.Where((x, y) => y >= endIndex && y < i).ToArray();
+                        ps[i].Data = ps.Where((x, y) => y >= endIndex && y < i).Select(x => x.Data != null ? new AddDataOperator(x.e, x.Data) : x.e).ToArray();
                         for (int Del = i - 1; Del >= endIndex; Del--)
                             ps.RemoveAt(Del);
                         i = endIndex;
@@ -131,7 +130,6 @@ namespace Calculator2.Calculator
                     bool CheckChar(object e, char CheckChar) => e is char @char && @char == CheckChar;
                 }
             }
-            ///TOODO нельзя применить сразу два оператора EndValueOperator решается проходом справа налево
         }
         private static void SearchValue(ref List<DataObjectInStr> DataStandartOperatorConstValue, string str, char Separator)
         {
@@ -241,17 +239,6 @@ namespace Calculator2.Calculator
                 this.EndIndex = EndIndex;
                 this.Data = Data;
             }
-
-            public override string ToString() => GetName();
-            private string GetName()
-            {
-                if (e is double @double)
-                    return @double.ToString();
-                else if (e is IName @IName)
-                    return @IName.GetName();
-                else
-                    return ((char)e).ToString();
-            }
         }
         public class AddDataOperator
         {
@@ -262,7 +249,6 @@ namespace Calculator2.Calculator
                 this.Operator = Operator;
                 this.Data = Data;
             }
-            public Type OperatorGetType() => Operator.GetType();
         }
     }
 }
