@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Calculator2.Calculator.Data.Operator
+namespace CalculatorCore.Data.Operator
 {
-    public class CastumOperator : IOperator, IName
+    public class CustomOperator : IOperator, IName
     {
         public delegate double MetotCalculate(string str, Setting setting);
         public delegate int GetEndIndex(int StartIndexSearch, string str);
@@ -12,7 +12,7 @@ namespace Calculator2.Calculator.Data.Operator
         private readonly MetotCalculate CalculateMetod;
         public readonly bool HelperSearchIndex;
 
-        public CastumOperator(string Designation, MetotCalculate CalculateMetod, GetEndIndex getEndIndex, bool HelperSearchIndex = true)
+        public CustomOperator(string Designation, MetotCalculate CalculateMetod, GetEndIndex getEndIndex, bool HelperSearchIndex = true)
         {
             this.Designation = Designation.ToLower();
             this.CalculateMetod = CalculateMetod;

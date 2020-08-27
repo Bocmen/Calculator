@@ -1,30 +1,30 @@
-﻿using Calculator2.Calculator.Data;
-using Calculator2.Calculator.Data.Operator;
+﻿using CalculatorCore.Data;
+using CalculatorCore.Data.Operator;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Calculator2.Calculator
+namespace CalculatorCore
 {
     public static class StringParser
     {
-        private static Setting settingStandart = new Setting();
+        private readonly static Setting settingStandart = new Setting();
 
         public static object[] SearchOperators(string str) => SearchOperators(str, settingStandart);
         public static object[] SearchOperators(string str, Setting setting)
         {
             object[] OperatorAndConst = setting.GetOperatorAndConstSortLength();
             List<DataObjectInStr> DataStandartOperatorConstValue = new List<DataObjectInStr>();
-            List<DataObjectInStr> DataCostumOperators = new List<DataObjectInStr>();
+            List<DataObjectInStr> DataCustomOperators = new List<DataObjectInStr>();
             foreach (var elem in OperatorAndConst)
             {
-                if (elem is CastumOperator)
-                    SearchElem(ref DataCostumOperators, elem, ((IName)elem).GetName(), str);
-                else if (elem is Const)
-                    SearchElem(ref DataStandartOperatorConstValue, ((Const)elem).Value, ((IName)elem).GetName(), str);
+                if (elem is CustomOperator)
+                    SearchElem(ref DataCustomOperators, elem, ((IName)elem).GetName(), str);
+                else if (elem is Const @const)
+                    SearchElem(ref DataStandartOperatorConstValue, @const.Value, ((IName)elem).GetName(), str);
                 else
                     SearchElem(ref DataStandartOperatorConstValue, elem, ((IName)elem).GetName(), str);
             }
-            List<DataObjectInStr> EndResul = ComlpeteCostumOperators(DataCostumOperators, str);
+            List<DataObjectInStr> EndResul = ComlpeteCustomOperators(DataCustomOperators, str);
             //Ищем открывающие и закрывающие скобки
             SearchElem(ref DataStandartOperatorConstValue, setting.OperatorParenthesisIn, setting.OperatorParenthesisIn.ToString(), str);
             SearchElem(ref DataStandartOperatorConstValue, setting.OperatorParenthesisOut, setting.OperatorParenthesisOut.ToString(), str);
@@ -55,7 +55,7 @@ namespace Calculator2.Calculator
             bool OldSymbolOperaor = true;
             for (int i = 0; i < ps.Count; i++)
             {
-                if (CheckPlusMinus(ps[i].e) && OldSymbolOperaor && (i + 1) < ps.Count && CheckCastumOperatorAndValue(ps[i + 1].e))
+                if (CheckPlusMinus(ps[i].e) && OldSymbolOperaor && (i + 1) < ps.Count && CheckCustomOperatorAndValue(ps[i + 1].e))
                 {
                     if (ps[i + 1].e is double D)
                     {
@@ -81,7 +81,7 @@ namespace Calculator2.Calculator
                 {
                     OldSymbolOperaor = (ps[i].e is StandartOperator @operator);
                 }
-                bool CheckCastumOperatorAndValue(object e) => e is CastumOperator || e is double || (e is char @char && @char == setting.OperatorParenthesisIn);
+                bool CheckCustomOperatorAndValue(object e) => e is CustomOperator || e is double || (e is char @char && @char == setting.OperatorParenthesisIn);
                 bool CheckPlusMinus(object e) => (e is StandartOperator @operator) && (@operator.Symbol == setting.OperatorPlus || @operator.Symbol == setting.OperatorMinus);
             }
         }
@@ -96,9 +96,9 @@ namespace Calculator2.Calculator
                         ps[i].Data = @D;
                         ps.RemoveAt(i-- - 1);
                     }
-                    else if (ps[i - 1].e is CastumOperator castumOperator)
+                    else if (ps[i - 1].e is CustomOperator customOperator)
                     {
-                        ps[i].Data = new AddDataOperator(castumOperator, ps[i - 1].Data);
+                        ps[i].Data = new AddDataOperator(customOperator, ps[i - 1].Data);
                         ps.RemoveAt(i-- - 1);
                     }
                     else if (ps[i - 1].e is EndValueOperator endValueOperator)
@@ -127,7 +127,7 @@ namespace Calculator2.Calculator
                             ps.RemoveAt(Del);
                         i = endIndex;
                     }
-                    bool CheckChar(object e, char CheckChar) => e is char @char && @char == CheckChar;
+                    static bool CheckChar(object e, char CheckChar) => e is char @char && @char == CheckChar;
                 }
             }
         }
@@ -137,7 +137,7 @@ namespace Calculator2.Calculator
             {
                 string Value = string.Empty;
                 int StartIndex = i;
-                while (i < str.Length && ((Value.Length > 0 && str[i] == Separator) || double.TryParse(str[i].ToString(), out double r)))
+                while (i < str.Length && ((Value.Length > 0 && str[i] == Separator) || double.TryParse(str[i].ToString(), out _)))
                 {
                     if (str[i] == Separator)
                         Value += ',';
@@ -157,26 +157,26 @@ namespace Calculator2.Calculator
             foreach (var i in index)
                 DataOperatorsIndex.Add(new DataObjectInStr(i, elem, 0));
         }
-        private static List<DataObjectInStr> ComlpeteCostumOperators(List<DataObjectInStr> castumOperators, string str)
+        private static List<DataObjectInStr> ComlpeteCustomOperators(List<DataObjectInStr> customOperators, string str)
         {
             List<DataObjectInStr> ps = new List<DataObjectInStr>();
-            for (int i = 0; i < castumOperators.Count; i++)
+            for (int i = 0; i < customOperators.Count; i++)
             {
-                CastumOperator @operator = (CastumOperator)castumOperators[i].e;
-                int EndIndex = RemoveStrSearchIndex(castumOperators[i].StartIndex, @operator, str);
-                string s = str.Substring(castumOperators[i].StartIndex + ((IName)castumOperators[i].e).GetName().Length, EndIndex - castumOperators[i].StartIndex - ((IName)castumOperators[i].e).GetName().Length + 1);
-                ps.Add(new DataObjectInStr(castumOperators[i].StartIndex, castumOperators[i].e, EndIndex, s));
+                CustomOperator @operator = (CustomOperator)customOperators[i].e;
+                int EndIndex = RemoveStrSearchIndex(customOperators[i].StartIndex, @operator, str);
+                string s = str.Substring(customOperators[i].StartIndex + ((IName)customOperators[i].e).GetName().Length, EndIndex - customOperators[i].StartIndex - ((IName)customOperators[i].e).GetName().Length + 1);
+                ps.Add(new DataObjectInStr(customOperators[i].StartIndex, customOperators[i].e, EndIndex, s));
 
-                int RemoveStrSearchIndex(int StartIndex, CastumOperator @operator, string str)
+                int RemoveStrSearchIndex(int StartIndex, CustomOperator @operator, string str)
                 {
                     int EndIndex = @operator.GetEndIndexSearch(StartIndex, str);
-                    var resulSearch = SearchElemIn(castumOperators[i].StartIndex, EndIndex, ref castumOperators);
+                    var resulSearch = SearchElemIn(customOperators[i].StartIndex, EndIndex, ref customOperators);
 
                     if (resulSearch != null && resulSearch.StartIndex != StartIndex && @operator.HelperSearchIndex)
                     {
-                        int IndIndexEraser = RemoveStrSearchIndex(resulSearch.StartIndex, (CastumOperator)resulSearch.e, str);
-                        str = str.Substring(0, resulSearch.StartIndex) + GetStrCount(IndIndexEraser - resulSearch.StartIndex + 1) + str.Remove(0, IndIndexEraser + 1);
-                        castumOperators.Remove(resulSearch);
+                        int EndIndexEraser = RemoveStrSearchIndex(resulSearch.StartIndex, (CustomOperator)resulSearch.e, str);
+                        str = str.Substring(0, resulSearch.StartIndex) + GetStrCount(EndIndexEraser - resulSearch.StartIndex + 1) + str.Remove(0, EndIndexEraser + 1);
+                        customOperators.Remove(resulSearch);
                         return RemoveStrSearchIndex(StartIndex, @operator, str);
                     }
                     return EndIndex;

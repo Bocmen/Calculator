@@ -1,10 +1,10 @@
-﻿using Calculator2.Calculator.Data;
-using Calculator2.Calculator.Data.Operator;
+﻿using CalculatorCore.Data;
+using CalculatorCore.Data.Operator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Calculator2.Calculator
+namespace CalculatorCore
 {
     public static class ReversePolishNotationHendler
     {
@@ -39,8 +39,8 @@ namespace Calculator2.Calculator
                     }
                     else
                         BuferOperator.Push(elem);
-                    bool CheckChar(object e, char Check) => e is char C && C == Check;
-                    int GetPriority(object e)
+                    static bool CheckChar(object e, char Check) => e is char C && C == Check;
+                    static int GetPriority(object e)
                     {
                         if (e is StandartOperator @operator)
                             return @operator.Priority;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Calculator2.Calculator.Data.Operator
+namespace CalculatorCore.Data.Operator
 {
     public class StandartOperator : IOperator, IName
     {

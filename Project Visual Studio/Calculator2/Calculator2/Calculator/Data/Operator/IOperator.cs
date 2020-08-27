@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Calculator2.Calculator.Data.Operator
+namespace CalculatorCore.Data.Operator
 {
     interface IOperator
     {

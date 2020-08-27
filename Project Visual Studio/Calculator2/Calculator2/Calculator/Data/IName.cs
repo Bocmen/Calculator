@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Calculator2.Calculator.Data
+namespace CalculatorCore.Data
 {
     interface IName
     {

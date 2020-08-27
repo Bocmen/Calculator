@@ -1,17 +1,16 @@
-﻿using Calculator2.Calculator;
-using Calculator2.Calculator.Data;
-using Calculator2.Calculator.Data.Operator;
+﻿using CalculatorCore;
+using CalculatorCore.Data;
+using CalculatorCore.Data.Operator;
 using System;
-using System.Resources;
 
-namespace Calculator2
+namespace CalculatorTest
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Setting setting = new Setting();
-            setting.AddOperator(new CastumOperator("Sin", CalculateSin, SearchEndIndex, true));
+            setting.AddOperator(new CustomOperator("Sin", CalculateSin, SearchEndIndex, true));
             setting.AddOperator(new EndValueOperator("!", Factorial));
         restart:
             try
@@ -26,7 +25,7 @@ namespace Calculator2
             }
             goto restart;
         }
-        private static double CalculateSin(string str, Setting setting) => Math.Sin(CalculatorHendler.Calculate(StringParser.SearchOperators(str.Substring(1, str.Length - 2), setting), setting));
+        private static double CalculateSin(string str, Setting setting) => Math.Sin(CalculatorHendler.Calculate(StringParser.SearchOperators(str[1..^1], setting), setting));
         private static double Factorial(double N)
         {
             N = (int)N;
@@ -50,6 +49,5 @@ namespace Calculator2
             }
             return 0;
         }
-        //TOODO знак , добавить ему проверку на совпадение с операторами
     }
 }

@@ -1,33 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Calculator2.Calculator.Data.Operator;
+using CalculatorCore.Data.Operator;
 using System.Linq;
 
-namespace Calculator2.Calculator.Data
+namespace CalculatorCore.Data
 {
     public class Setting
     {
-        ///////////////////////////////////////////////////////////////// Обозначение (char) стандартных обязательных операторов
-        /// <summary>
-        /// Обозначение открывающей скобки
-        /// </summary>
-        public char OperatorParenthesisIn = '(';
-        /// <summary>
-        /// Обозначение закрывающей скобки
-        /// </summary>
-        public char OperatorParenthesisOut = ')';
-        /// <summary>
-        /// Обозначение разделяющей запятой с числами с плавующей запятой
-        /// </summary>
-        public char OperatorSeparatorDouble = ',';
-
+        ///////////////////////////////////////////////////////////////// Обозначение (char) стандартных обязательных операторов и символов
         private char
+            operatorParenthesisIn = '(',
+            operatorParenthesisOut = ')',
+            operatorSeparatorDouble = ',',
             operatorPlus = '+',
             operatorMinus = '-',
             operatorMultiply = '*',
             operatorShare = '/',
             operatorPow = '^';
+
+
+        /// <summary>
+        /// Обозначение разделяющей запятой с числами с плавующей запятой
+        /// </summary>
+        public char OperatorSeparatorDouble
+        {
+            get
+            {
+                return operatorSeparatorDouble;
+            }
+            set
+            {
+                if (CheckUnicalName(value.ToString()))
+                    operatorSeparatorDouble = value;
+            }
+        }
+        /// <summary>
+        /// Обозначение открывающей скобки
+        /// </summary>
+        public char OperatorParenthesisIn
+        {
+            get
+            {
+                return operatorParenthesisIn;
+            }
+            set
+            {
+                if (CheckUnicalName(value.ToString()))
+                    operatorParenthesisIn = value;
+            }
+        }
+        /// <summary>
+        /// Обозначение закрывающей скобки
+        /// </summary>
+        public char OperatorParenthesisOut
+        {
+            get
+            {
+                return operatorParenthesisOut;
+            }
+            set
+            {
+                if (CheckUnicalName(value.ToString()))
+                    operatorParenthesisOut = value;
+            }
+        }
 
         /// <summary>
         /// Оператор сложения и обозначения положительных чисел
@@ -122,12 +158,12 @@ namespace Calculator2.Calculator.Data
 
             }
         }
-        private List<object> costumOperator = new List<object>();
+        private List<object> customOperator = new List<object>();
         public object[] CostumOperator
         {
             get
             {
-                return costumOperator.ToArray();
+                return customOperator.ToArray();
             }
             private set
             {
@@ -140,7 +176,7 @@ namespace Calculator2.Calculator.Data
             {
                 List<object> list = new List<object>();
                 list.AddRange(StandartOperators);
-                list.AddRange(costumOperator);
+                list.AddRange(customOperator);
                 return list.ToArray();
             }
             private set
@@ -165,12 +201,12 @@ namespace Calculator2.Calculator.Data
         {
             List<object> list = new List<object>();
             list.AddRange(StandartOperators);
-            list.AddRange(costumOperator);
+            list.AddRange(customOperator);
             list.AddRange(consts);
 
             list.Sort((a, b) => Length(b).CompareTo(Length(a)));
 
-            int Length(object e)
+            static int Length(object e)
             {
                 if (e.GetType() == typeof(Const))
                     return ((Const)e).Name.Length;
@@ -180,10 +216,10 @@ namespace Calculator2.Calculator.Data
 
             return list.ToArray();
         }
-        public bool AddOperator(CastumOperator castumOperator) => AddComponentList(ref costumOperator, castumOperator, ((IName)castumOperator).GetName());
-        public bool AddOperator(StandartOperator standartOperator) => AddComponentList(ref costumOperator, standartOperator, ((IName)standartOperator).GetName());
-        public bool AddOperator(EndValueOperator endValueOperator) => AddComponentList(ref costumOperator, endValueOperator, ((IName)endValueOperator).GetName());
-        public bool RemoveOperator(int index) => RemoveComponentList(ref costumOperator, index);
+        public bool AddOperator(CustomOperator customOperator) => AddComponentList(ref this.customOperator, customOperator, ((IName)customOperator).GetName());
+        public bool AddOperator(StandartOperator standartOperator) => AddComponentList(ref customOperator, standartOperator, ((IName)standartOperator).GetName());
+        public bool AddOperator(EndValueOperator endValueOperator) => AddComponentList(ref customOperator, endValueOperator, ((IName)endValueOperator).GetName());
+        public bool RemoveOperator(int index) => RemoveComponentList(ref customOperator, index);
         public bool AddConst(Const @const) => AddComponentList(ref consts, @const, @const.Name);
         public bool RemoveConst(int index) => RemoveComponentList(ref consts, index);
         private bool AddComponentList<T>(ref List<T> ts, T e, string Name)
@@ -209,7 +245,8 @@ namespace Calculator2.Calculator.Data
                 (
                 (consts == null || consts.LastOrDefault(x => x.Name == Name) == null) &&
                 (StandartOperators == null || StandartOperators.LastOrDefault(x => ((IName)x).GetName() == Name) == null) &&
-                (costumOperator == null || costumOperator.LastOrDefault(x => ((IName)x).GetName() == Name) == null)
+                (customOperator == null || customOperator.LastOrDefault(x => ((IName)x).GetName() == Name) == null) &&
+                (Name != operatorSeparatorDouble.ToString() && Name != OperatorParenthesisIn.ToString() && Name != OperatorParenthesisOut.ToString())
                 );
         }
         private void UpdateStandartCharOperator(char Old, char New)
